@@ -56,12 +56,17 @@ export function EventForm({ initialData, action, submitLabel = "Create Event" }:
 
     // Client-side validation
     const title = formData.get("title") as string
+    const location = formData.get("location") as string
     const startTime = formData.get("start_time") as string
 
     const newErrors: Record<string, string> = {}
 
     if (!title?.trim()) {
       newErrors.title = "Title is required"
+    }
+
+    if (!location?.trim()) {
+      newErrors.location = "Location is required"
     }
 
     if (!startTime) {
@@ -121,7 +126,7 @@ export function EventForm({ initialData, action, submitLabel = "Create Event" }:
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="location">Location</Label>
+        <Label htmlFor="location">Location *</Label>
         <Input
           id="location"
           name="location"
@@ -129,6 +134,9 @@ export function EventForm({ initialData, action, submitLabel = "Create Event" }:
           placeholder="Where is this event?"
           className="bg-zinc-900 border-zinc-800"
         />
+        {errors.location && (
+          <p className="text-sm text-red-400">{errors.location}</p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

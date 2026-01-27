@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { z } from 'zod'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { createEventSchema } from '@/lib/validations'
 import type { EventWithCreator, EventInsert, EventUpdate } from '@/types'
@@ -48,7 +49,7 @@ export async function getEvent(id: string): Promise<EventWithCreator | null> {
 }
 
 // Create new event
-export async function createEvent(formData: FormData) {
+export async function createEvent(formData: FormData): Promise<{ error?: string } | void> {
   const supabase = await createServerSupabaseClient()
 
   // Check auth
@@ -67,7 +68,16 @@ export async function createEvent(formData: FormData) {
     link: formData.get('link'),
   }
 
-  const validated = createEventSchema.parse(raw)
+  let validated
+  try {
+    validated = createEventSchema.parse(raw)
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      const firstError = err.issues[0]
+      return { error: firstError.message }
+    }
+    return { error: 'Invalid form data' }
+  }
 
   // Handle image upload if provided
   const imageFile = formData.get('image') as File | null
@@ -105,14 +115,17 @@ export async function createEvent(formData: FormData) {
     .select()
     .single()
 
-  if (error) throw error
+  if (error) {
+    console.error('Database error:', error)
+    return { error: 'Failed to create event. Please try again.' }
+  }
 
   revalidatePath('/')
   redirect(`/events/${(data as { id: string }).id}`)
 }
 
 // Update event (verify ownership)
-export async function updateEvent(eventId: string, formData: FormData) {
+export async function updateEvent(eventId: string, formData: FormData): Promise<{ error?: string } | void> {
   const supabase = await createServerSupabaseClient()
 
   // Check auth
@@ -128,12 +141,17 @@ export async function updateEvent(eventId: string, formData: FormData) {
     .eq('id', eventId)
     .single()
 
-  if (fetchError) throw fetchError
-  if (!existingEvent) throw new Error('Event not found')
+  if (fetchError) {
+    console.error('Fetch error:', fetchError)
+    return { error: 'Event not found' }
+  }
+  if (!existingEvent) {
+    return { error: 'Event not found' }
+  }
 
   const existing = existingEvent as { creator_id: string; image_url: string | null }
   if (existing.creator_id !== user.id) {
-    throw new Error('You do not have permission to update this event')
+    return { error: 'You do not have permission to update this event' }
   }
 
   // Parse and validate
@@ -146,7 +164,16 @@ export async function updateEvent(eventId: string, formData: FormData) {
     link: formData.get('link'),
   }
 
-  const validated = createEventSchema.parse(raw)
+  let validated
+  try {
+    validated = createEventSchema.parse(raw)
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      const firstError = err.issues[0]
+      return { error: firstError.message }
+    }
+    return { error: 'Invalid form data' }
+  }
 
   // Handle image upload if provided
   const imageFile = formData.get('image') as File | null
@@ -185,7 +212,10 @@ export async function updateEvent(eventId: string, formData: FormData) {
     .select()
     .single()
 
-  if (error) throw error
+  if (error) {
+    console.error('Database error:', error)
+    return { error: 'Failed to update event. Please try again.' }
+  }
 
   revalidatePath('/')
   revalidatePath(`/events/${eventId}`)
@@ -234,4 +264,38 @@ export async function deleteEvent(eventId: string) {
 
   revalidatePath('/')
   redirect('/')
+}
+
+// Extended type for events with save count
+export type EventWithSaveCount = EventWithCreator & { save_count: number }
+
+// Get events created by current user (with save counts)
+export async function getMyEvents(): Promise<EventWithSaveCount[]> {
+  const supabase = await createServerSupabaseClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  // Get events with favorites count
+  const { data, error } = await supabase
+    .from('events')
+    .select(
+      `
+      *,
+      creator:users(*),
+      favorites(count)
+    `
+    )
+    .eq('creator_id', user.id)
+    .order('start_time', { ascending: true })
+
+  if (error) throw error
+
+  return (data || []).map((event) => ({
+    ...event,
+    save_count: (event.favorites as { count: number }[])?.[0]?.count || 0,
+    creator: event.creator,
+  })) as unknown as EventWithSaveCount[]
 }
