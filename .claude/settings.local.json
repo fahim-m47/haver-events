@@ -4,6 +4,8 @@
     "supabase",
     "tailwindcss-server",
     "shadcn-ui",
-    "vercel"
-  ]
+    "vercel",
+    "chrome-devtools"
+  ],
+  "enableAllProjectMcpServers": true
 }
