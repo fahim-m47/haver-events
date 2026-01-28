@@ -29,7 +29,7 @@ export default async function EditEventPage({
   const updateEventWithId = updateEvent.bind(null, id)
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
       <h1 className="text-3xl font-bold mb-8">Edit Event</h1>
       <EventForm
         initialData={event}
