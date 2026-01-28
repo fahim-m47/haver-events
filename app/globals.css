@@ -48,6 +48,21 @@
   );
 }
 
+/* Datetime-local calendar picker icon - make visible on dark backgrounds */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background-color: rgba(61, 14, 16, 0.5);
+  border: 1px solid rgba(61, 14, 16, 0.6);
+  transition: background-color 0.2s;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+  background-color: rgba(61, 14, 16, 0.8);
+}
+
 /* Timeline utilities */
 .timeline-dot {
   @apply w-2 h-2 rounded-full bg-zinc-500;
