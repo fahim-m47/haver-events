@@ -41,17 +41,17 @@ export function FavoriteButton({ eventId, initialFavorited, size = 'default' }: 
     })
   }
 
-  const iconSize = size === 'sm' ? 'h-4 w-4' : 'h-5 w-5'
-  const buttonSize = size === 'sm' ? 'sm' : 'default'
+  const iconSize = size === 'sm' ? 'h-8 w-8' : 'h-10 w-10'
 
   return (
     <Button
       variant="ghost"
-      size={buttonSize === 'sm' ? 'sm' : 'icon'}
+      size="icon"
       onClick={handleToggle}
       disabled={isPending}
       className={cn(
         'transition-colors',
+        size === 'sm' ? 'h-10 w-10' : 'h-14 w-14',
         isFavorited
           ? 'text-red-500 hover:text-red-400'
           : 'text-zinc-400 hover:text-zinc-100'
