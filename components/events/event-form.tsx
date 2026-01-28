@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
+import { format } from "date-fns"
 import Image from "next/image"
 import { Loader2, Upload, X, Clock, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -29,12 +30,8 @@ export function EventForm({ initialData, action, submitLabel = "Create Event" }:
   const formatDateTimeLocal = (dateStr: string | null | undefined) => {
     if (!dateStr) return ""
     const date = new Date(dateStr)
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    const hours = String(date.getHours()).padStart(2, '0')
-    const minutes = String(date.getMinutes()).padStart(2, '0')
-    return `${year}-${month}-${day}T${hours}:${minutes}`
+    // Use date-fns for consistent cross-browser timezone handling
+    return format(date, "yyyy-MM-dd'T'HH:mm")
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

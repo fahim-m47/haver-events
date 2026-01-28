@@ -62,7 +62,7 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[280px]">
               <SheetHeader>
-                <SheetTitle className="flex items-center gap-2">
+                <SheetTitle className="flex items-center">
                   <Image
                     src="/images/acorn_white.png"
                     alt="Haver Events"
@@ -70,9 +70,6 @@ export function Header() {
                     height={28}
                     className="object-contain"
                   />
-                  <span className="text-xl font-bold">
-                    Haver<span className="text-red-600">Events</span>
-                  </span>
                 </SheetTitle>
               </SheetHeader>
               <div className="mt-8 flex flex-col space-y-6">

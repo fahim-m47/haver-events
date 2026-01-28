@@ -29,10 +29,10 @@ export function EventCard({ event, initialFavorited = false }: EventCardProps) {
               {event.title}
             </h3>
 
-            <div className="mt-1 flex items-center gap-1 text-sm text-zinc-500">
-              <span>By</span>
-              <span>{event.creator?.name || "Unknown host"}</span>
-              {event.creator?.is_verified_host && <VerifiedBadge />}
+            <div className="mt-1 flex items-start gap-1 text-sm text-zinc-500 min-w-0">
+              <span className="shrink-0">By</span>
+              <span className="line-clamp-2 break-words">{event.creator?.name || "Unknown host"}</span>
+              {event.creator?.is_verified_host && <VerifiedBadge className="shrink-0 mt-0.5" />}
             </div>
 
             {event.location && (
