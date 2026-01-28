@@ -1,14 +1,14 @@
 # CLAUDE.md
 
 ## Project Overview
-HaverEvents is a centralized campus events platform for Haverford College, serving ~1,500 students. Users can browse, post, save, and share campus events. Replaces scattered email communications with centralized event discovery.
+Acorn is a centralized campus events platform for Haverford College, serving ~1,500 students. Users can browse, post, save, and share campus events. Replaces scattered email communications with centralized event discovery.
 
 ## Architecture Overview
 
 **Tech stack:** Next.js 14+ (App Router), Supabase, Tailwind CSS, shadcn/ui, Vercel
 
 ```
-haver_events/
+acorn/
 ├── app/                    # Next.js App Router pages
 │   ├── (auth)/             # Auth routes (login, callback)
 │   ├── (main)/             # Main app routes

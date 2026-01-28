@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "HaverEvents",
+  title: "Acorn",
   description: "Centralized campus events platform for Haverford College",
 };
 
