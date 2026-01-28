@@ -20,8 +20,8 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 header-gradient">
-      <div className="container mx-auto flex h-16 items-center px-4">
+    <header className="fixed top-0 left-0 right-0 z-50 header-gradient pb-10 pointer-events-none">
+      <div className="container mx-auto flex h-16 items-center px-4 pointer-events-auto">
         {/* Left: Navigation */}
         <div className="flex flex-1 items-center">
           <Nav />
