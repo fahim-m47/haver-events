@@ -7,6 +7,7 @@ import type { User } from '@supabase/supabase-js'
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
@@ -23,6 +24,19 @@ export function useAuth() {
     const getInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       setUser(session?.user ?? null)
+
+      // Check admin status if user is logged in
+      if (session?.user) {
+        const { data } = await supabase
+          .from('users')
+          .select('is_admin')
+          .eq('id', session.user.id)
+          .single()
+        setIsAdmin(data?.is_admin ?? false)
+      } else {
+        setIsAdmin(false)
+      }
+
       setLoading(false)
     }
 
@@ -30,8 +44,21 @@ export function useAuth() {
 
     // Subscribe to auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      async (_event, session) => {
         setUser(session?.user ?? null)
+
+        // Check admin status if user is logged in
+        if (session?.user) {
+          const { data } = await supabase
+            .from('users')
+            .select('is_admin')
+            .eq('id', session.user.id)
+            .single()
+          setIsAdmin(data?.is_admin ?? false)
+        } else {
+          setIsAdmin(false)
+        }
+
         setLoading(false)
       }
     )
@@ -53,6 +80,7 @@ export function useAuth() {
 
   return {
     user,
+    isAdmin,
     loading,
     signIn,
     signOut,

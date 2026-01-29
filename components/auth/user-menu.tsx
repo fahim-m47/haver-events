@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { User, Heart, LogOut } from 'lucide-react'
+import { User, Heart, LogOut, Shield } from 'lucide-react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import {
   DropdownMenu,
@@ -16,6 +16,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 interface UserMenuProps {
   user: SupabaseUser
   onSignOut: () => void
+  isAdmin?: boolean
 }
 
 function getInitials(name?: string | null, email?: string | null): string {
@@ -32,7 +33,7 @@ function getInitials(name?: string | null, email?: string | null): string {
   return 'U'
 }
 
-export function UserMenu({ user, onSignOut }: UserMenuProps) {
+export function UserMenu({ user, onSignOut, isAdmin }: UserMenuProps) {
   const displayName = user.user_metadata?.full_name || user.user_metadata?.name || null
   const email = user.email
   const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture || null
@@ -72,6 +73,17 @@ export function UserMenu({ user, onSignOut }: UserMenuProps) {
             Saved Events
           </Link>
         </DropdownMenuItem>
+        {isAdmin && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/admin" className="cursor-pointer">
+                <Shield className="mr-2 h-4 w-4" />
+                Admin Dashboard
+              </Link>
+            </DropdownMenuItem>
+          </>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={onSignOut} className="cursor-pointer">
           <LogOut className="mr-2 h-4 w-4" />

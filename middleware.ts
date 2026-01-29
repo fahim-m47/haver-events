@@ -28,22 +28,46 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // Refresh session - IMPORTANT
-  // This will refresh the session if expired and update cookies
-  await supabase.auth.getUser()
+  // Refresh session
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // Check if user is banned (skip for /banned page itself)
+  if (user && !request.nextUrl.pathname.startsWith('/banned')) {
+    const { data: userData } = await supabase
+      .from('users')
+      .select('is_banned')
+      .eq('id', user.id)
+      .single()
+
+    if (userData?.is_banned) {
+      // Sign out banned user
+      await supabase.auth.signOut()
+      return NextResponse.redirect(new URL('/banned', request.url))
+    }
+  }
+
+  // Protect admin routes
+  if (request.nextUrl.pathname.startsWith('/admin')) {
+    if (!user) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+
+    const { data: adminCheck } = await supabase
+      .from('users')
+      .select('is_admin')
+      .eq('id', user.id)
+      .single()
+
+    if (!adminCheck?.is_admin) {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+  }
 
   return supabaseResponse
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - Common image file extensions
-     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

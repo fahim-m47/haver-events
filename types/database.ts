@@ -8,6 +8,10 @@ export type Database = {
           name: string | null
           avatar_url: string | null
           is_verified_host: boolean
+          is_admin: boolean
+          is_banned: boolean
+          banned_at: string | null
+          banned_by: string | null
           created_at: string
         }
         Insert: {
@@ -16,6 +20,10 @@ export type Database = {
           name?: string | null
           avatar_url?: string | null
           is_verified_host?: boolean
+          is_admin?: boolean
+          is_banned?: boolean
+          banned_at?: string | null
+          banned_by?: string | null
           created_at?: string
         }
         Update: {
@@ -24,6 +32,10 @@ export type Database = {
           name?: string | null
           avatar_url?: string | null
           is_verified_host?: boolean
+          is_admin?: boolean
+          is_banned?: boolean
+          banned_at?: string | null
+          banned_by?: string | null
           created_at?: string
         }
         Relationships: []
