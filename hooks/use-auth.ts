@@ -22,33 +22,8 @@ export function useAuth() {
 
     // Get initial session
     const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user ?? null)
-
-      // Check admin status if user is logged in
-      if (session?.user) {
-        try {
-          const { data } = await supabase
-            .from('users')
-            .select('is_admin')
-            .eq('id', session.user.id)
-            .single()
-          setIsAdmin(data?.is_admin ?? false)
-        } catch {
-          setIsAdmin(false)
-        }
-      } else {
-        setIsAdmin(false)
-      }
-
-      setLoading(false)
-    }
-
-    getInitialSession()
-
-    // Subscribe to auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
         setUser(session?.user ?? null)
 
         // Check admin status if user is logged in
@@ -66,8 +41,45 @@ export function useAuth() {
         } else {
           setIsAdmin(false)
         }
-
+      } catch (error) {
+        console.error('Auth error:', error)
+        setUser(null)
+        setIsAdmin(false)
+      } finally {
         setLoading(false)
+      }
+    }
+
+    getInitialSession()
+
+    // Subscribe to auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
+        try {
+          setUser(session?.user ?? null)
+
+          // Check admin status if user is logged in
+          if (session?.user) {
+            try {
+              const { data } = await supabase
+                .from('users')
+                .select('is_admin')
+                .eq('id', session.user.id)
+                .single()
+              setIsAdmin(data?.is_admin ?? false)
+            } catch {
+              setIsAdmin(false)
+            }
+          } else {
+            setIsAdmin(false)
+          }
+        } catch (error) {
+          console.error('Auth state change error:', error)
+          setUser(null)
+          setIsAdmin(false)
+        } finally {
+          setLoading(false)
+        }
       }
     )
 
