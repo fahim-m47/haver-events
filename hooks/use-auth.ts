@@ -27,12 +27,16 @@ export function useAuth() {
 
       // Check admin status if user is logged in
       if (session?.user) {
-        const { data } = await supabase
-          .from('users')
-          .select('is_admin')
-          .eq('id', session.user.id)
-          .single()
-        setIsAdmin(data?.is_admin ?? false)
+        try {
+          const { data } = await supabase
+            .from('users')
+            .select('is_admin')
+            .eq('id', session.user.id)
+            .single()
+          setIsAdmin(data?.is_admin ?? false)
+        } catch {
+          setIsAdmin(false)
+        }
       } else {
         setIsAdmin(false)
       }
@@ -49,12 +53,16 @@ export function useAuth() {
 
         // Check admin status if user is logged in
         if (session?.user) {
-          const { data } = await supabase
-            .from('users')
-            .select('is_admin')
-            .eq('id', session.user.id)
-            .single()
-          setIsAdmin(data?.is_admin ?? false)
+          try {
+            const { data } = await supabase
+              .from('users')
+              .select('is_admin')
+              .eq('id', session.user.id)
+              .single()
+            setIsAdmin(data?.is_admin ?? false)
+          } catch {
+            setIsAdmin(false)
+          }
         } else {
           setIsAdmin(false)
         }
