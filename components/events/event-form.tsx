@@ -44,6 +44,14 @@ export function EventForm({ initialData, action, submitLabel = "Create Event" }:
       }
       reader.readAsDataURL(file)
     }
+    
+    // Validate file size (50MB)
+    if (file && file.size > 50 * 1024 * 1024) {
+      setErrors((prev) => ({ ...prev, form: "Image size must be less than 50MB" }))
+      setImagePreview(null)
+      if (fileInputRef.current) fileInputRef.current.value = ""
+      return
+    }
   }
 
   const clearImage = () => {
@@ -139,7 +147,7 @@ export function EventForm({ initialData, action, submitLabel = "Create Event" }:
               >
                 <Upload className="h-8 w-8 text-zinc-500 mb-2" />
                 <p className="text-sm text-zinc-500">Click to upload an image</p>
-                <p className="text-xs text-zinc-600 mt-1">PNG, JPG up to 5MB</p>
+                <p className="text-xs text-zinc-600 mt-1">PNG, JPG up to 50MB</p>
               </div>
             )}
             <input

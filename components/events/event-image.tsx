@@ -30,7 +30,14 @@ export function EventImage({ imageUrl, alt, className, priority = false, variant
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-red-900 via-red-800 to-zinc-900" />
+        <Image
+          src="/images/default-event.jpg"
+          alt={alt}
+          fill
+          className="object-cover"
+          priority={priority}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
       )}
     </div>
   )
