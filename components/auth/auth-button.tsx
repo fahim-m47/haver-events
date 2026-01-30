@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { UserMenu } from './user-menu'
 
 export function AuthButton() {
-  const { user, isAdmin, loading, signIn, signOut } = useAuth()
+  const { user, loading, signIn, signOut } = useAuth()
 
   if (loading) {
     return (
@@ -21,5 +21,5 @@ export function AuthButton() {
     )
   }
 
-  return <UserMenu user={user} onSignOut={signOut} isAdmin={isAdmin} />
+  return <UserMenu user={user} onSignOut={signOut} />
 }

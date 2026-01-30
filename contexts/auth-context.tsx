@@ -7,7 +7,6 @@ import type { User } from '@supabase/supabase-js'
 
 interface AuthContextType {
   user: User | null
-  isAdmin: boolean
   loading: boolean
   signIn: () => void
   signOut: () => Promise<void>
@@ -17,7 +16,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
@@ -32,18 +30,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!isMounted) return
 
         setUser(session?.user ?? null)
-
-        if (session?.user) {
-          const { data } = await supabase
-            .from('users')
-            .select('is_admin')
-            .eq('id', session.user.id)
-            .single()
-
-          if (isMounted) {
-            setIsAdmin(data?.is_admin ?? false)
-          }
-        }
       } catch (error) {
         console.error('[AUTH] Init error:', error)
       } finally {
@@ -54,23 +40,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initAuth()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      (_event, session) => {
         if (!isMounted) return
 
         setUser(session?.user ?? null)
-
-        if (session?.user) {
-          const { data } = await supabase
-            .from('users')
-            .select('is_admin')
-            .eq('id', session.user.id)
-            .single()
-
-          if (isMounted) setIsAdmin(data?.is_admin ?? false)
-        } else {
-          setIsAdmin(false)
-        }
-
         setLoading(false)
       }
     )
@@ -86,13 +59,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = useCallback(async () => {
     const supabase = createClient()
     setUser(null)
-    setIsAdmin(false)
     await supabase.auth.signOut()
     router.refresh()
   }, [router])
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   )

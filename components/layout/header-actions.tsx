@@ -8,7 +8,7 @@ import { CurrentTime } from './current-time'
 import { UserMenu } from '@/components/auth/user-menu'
 
 export function HeaderActions() {
-  const { user, isAdmin, loading, signIn, signOut } = useAuth()
+  const { user, loading, signIn, signOut } = useAuth()
 
   if (loading) {
     return (
@@ -61,7 +61,7 @@ export function HeaderActions() {
       </Button>
 
       {/* User Menu */}
-      <UserMenu user={user} onSignOut={signOut} isAdmin={isAdmin} />
+      <UserMenu user={user} onSignOut={signOut} />
     </div>
   )
 }

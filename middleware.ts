@@ -29,39 +29,7 @@ export async function middleware(request: NextRequest) {
   )
 
   // Refresh session
-  const { data: { user } } = await supabase.auth.getUser()
-
-  // Check if user is banned (skip for /banned page itself)
-  if (user && !request.nextUrl.pathname.startsWith('/banned')) {
-    const { data: userData } = await supabase
-      .from('users')
-      .select('is_banned')
-      .eq('id', user.id)
-      .single()
-
-    if (userData?.is_banned) {
-      // Sign out banned user
-      await supabase.auth.signOut()
-      return NextResponse.redirect(new URL('/banned', request.url))
-    }
-  }
-
-  // Protect admin routes
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    if (!user) {
-      return NextResponse.redirect(new URL('/login', request.url))
-    }
-
-    const { data: adminCheck } = await supabase
-      .from('users')
-      .select('is_admin')
-      .eq('id', user.id)
-      .single()
-
-    if (!adminCheck?.is_admin) {
-      return NextResponse.redirect(new URL('/', request.url))
-    }
-  }
+  await supabase.auth.getUser()
 
   return supabaseResponse
 }

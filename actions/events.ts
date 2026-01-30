@@ -6,7 +6,6 @@ import { z } from 'zod'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { createEventSchema } from '@/lib/validations'
 import type { EventWithCreator, EventInsert, EventUpdate } from '@/types'
-import { isCurrentUserAdmin } from './admin'
 
 // Get upcoming events (next 14 days)
 export async function getEvents(): Promise<EventWithCreator[]> {
@@ -244,8 +243,7 @@ export async function deleteEvent(eventId: string) {
   if (!existingEvent) throw new Error('Event not found')
 
   const existing = existingEvent as { creator_id: string; image_url: string | null }
-  const isAdmin = await isCurrentUserAdmin()
-  if (existing.creator_id !== user.id && !isAdmin) {
+  if (existing.creator_id !== user.id) {
     throw new Error('You do not have permission to delete this event')
   }
 
