@@ -16,6 +16,7 @@ const publicLinks = [
 
 const authLinks = [
   { href: '/saved', label: 'Saved' },
+  { href: '/notifications', label: 'Notifications' },
   { href: '/my-events', label: 'My Events' },
 ]
 

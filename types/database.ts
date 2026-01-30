@@ -153,6 +153,32 @@ export type Database = {
           }
         ]
       }
+      notification_reads: {
+        Row: {
+          id: string
+          user_id: string
+          last_read_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          last_read_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          last_read_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'notification_reads_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: true
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never

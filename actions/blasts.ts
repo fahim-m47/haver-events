@@ -90,6 +90,7 @@ export async function createBlast(formData: FormData): Promise<{ error?: string 
   }
 
   revalidatePath(`/events/${validated.event_id}`)
+  revalidatePath('/notifications')
 }
 
 // Delete a blast (only blast creator can delete)
@@ -134,4 +135,5 @@ export async function deleteBlast(blastId: string): Promise<{ error?: string } |
   }
 
   revalidatePath(`/events/${blastData.event_id}`)
+  revalidatePath('/notifications')
 }

@@ -1,11 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { Bell, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/auth-context'
 import { CurrentTime } from './current-time'
 import { UserMenu } from '@/components/auth/user-menu'
+import { NotificationBell } from './notification-bell'
 
 export function HeaderActions() {
   const { user, loading, signIn, signOut } = useAuth()
@@ -51,14 +52,7 @@ export function HeaderActions() {
       </Button>
 
       {/* Notifications */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="text-white hover:bg-white/10 hover:text-white"
-        aria-label="Notifications"
-      >
-        <Bell className="h-5 w-5" />
-      </Button>
+      <NotificationBell />
 
       {/* User Menu */}
       <UserMenu user={user} onSignOut={signOut} />

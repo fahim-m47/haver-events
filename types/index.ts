@@ -19,6 +19,10 @@ export type Blast = Database['public']['Tables']['blasts']['Row']
 export type BlastInsert = Database['public']['Tables']['blasts']['Insert']
 export type BlastUpdate = Database['public']['Tables']['blasts']['Update']
 
+export type NotificationRead = Database['public']['Tables']['notification_reads']['Row']
+export type NotificationReadInsert = Database['public']['Tables']['notification_reads']['Insert']
+export type NotificationReadUpdate = Database['public']['Tables']['notification_reads']['Update']
+
 // Extended types with relationships
 export type EventWithCreator = Event & {
   creator: User
@@ -30,4 +34,12 @@ export type BlastWithCreator = Blast & {
 
 export type EventWithBlasts = EventWithCreator & {
   blasts: BlastWithCreator[]
+}
+
+// Notification types
+export type NotificationWithEvent = BlastWithCreator & {
+  event: {
+    id: string
+    title: string
+  }
 }
